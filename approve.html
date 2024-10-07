@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Approve Delivery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+            text-align: center;
+        }
+        h2 {
+            color: #25D366;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        button:hover {
+            background-color: #128C7E;
+        }
+        #status {
+            color: green;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Approve Delivery</h2>
+    <p>Please click the button below to approve the delivery. Your current location will be captured as proof.</p>
+    <button id="approveBtn">Approve Delivery</button>
+    <p id="status"></p>
+
+    <script>
+        document.getElementById('approveBtn').addEventListener('click', function() {
+            if (!navigator.geolocation) {
+                alert('Geolocation is not supported by your browser.');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(success, error);
+        });
+
+        function success(position) {
+            const latitude  = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // Extract consignmentId from URL parameters
+            const params = new URLSearchParams(window.location.search);
+            const consignmentId = params.get('consignmentId') || 'Unknown';
+
+            const fixedNumber = '+916305518808'; // Replace with your fixed WhatsApp number (include country code)
+
+            // Construct proof message
+            const proofMessage = encodeURIComponent(
+                `Delivery Approved.\nConsignment ID: ${consignmentId}\nLocation: Latitude ${latitude}, Longitude ${longitude}`
+            );
+
+            // Remove '+' from the number for the URL
+            const whatsappNumber = fixedNumber.replace('+', '');
+
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${proofMessage}`;
+
+            // Open WhatsApp with the proof message
+            window.open(whatsappURL, '_blank');
+
+            // Inform the user
+            document.getElementById('status').innerText = 'Delivery approved and proof sent via WhatsApp.';
+        }
+
+        function error() {
+            alert('Unable to retrieve your location.');
+        }
+    </script>
+</body>
+</html>

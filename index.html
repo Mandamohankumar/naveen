@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EPOD - Electronic Proof of Delivery</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 40px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #25D366;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0 16px 0;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 12px;
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #128C7E;
+        }
+        #message {
+            color: green;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>EPOD - Electronic Proof of Delivery</h2>
+        <form id="epodForm">
+            <label for="invoiceFile">Upload Invoice:</label>
+            <input type="file" id="invoiceFile" name="invoiceFile" accept=".pdf,.png,.jpg,.jpeg" required>
+
+            <button type="submit">Send Invoice via WhatsApp</button>
+        </form>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        document.getElementById('epodForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const invoiceFile = document.getElementById('invoiceFile').files[0];
+            const fixedNumber = '+919100812765'; // Replace with your fixed WhatsApp number (include country code)
+
+            if (!invoiceFile) {
+                alert('Please select an invoice file.');
+                return;
+            }
+
+            // Since we cannot upload the file without a backend, inform the user to attach it manually.
+            // Alternatively, integrate with a cloud storage service that provides public URLs.
+
+            // Generate a unique consignment ID (simple example using timestamp)
+            const consignmentId = `C${Date.now()}`;
+
+            // Approval URL pointing to approve.html hosted on GitHub Pages
+            const approvalURL = `https://mandamohankumar.github.io/naveen/approve.html?consignmentId=${consignmentId}`;
+
+            const message = encodeURIComponent(
+                `Hello, please find attached the invoice for your recent delivery. Kindly approve the delivery by clicking the link below:\n${approvalURL}`
+            );
+
+            // Remove '+' from the number for the URL
+            const whatsappNumber = fixedNumber.replace('+', '');
+
+            const whatsappURL = `https://wa.me/${whatsappNumber}?text=${message}`;
+
+            // Open WhatsApp in a new tab/window
+            window.open(whatsappURL, '_blank');
+
+            // Inform the user
+            document.getElementById('message').innerText = 'Invoice link has been sent via WhatsApp.';
+        });
+    </script>
+</body>
+</html>
